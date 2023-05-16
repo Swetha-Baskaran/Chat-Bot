@@ -8,6 +8,7 @@ import {
 	ScrollView,
 } from "react-native";
 import axios from "axios";
+import {API_URL, API_KEY} from "@env";
 
 const ChatPage = () => {
 	const scrollViewRef = useRef();
@@ -29,14 +30,13 @@ const ChatPage = () => {
 	const sendMessage = async () => {
 		const options = {
 			method: "GET",
-			url: "https://ai-chatbot.p.rapidapi.com/chat/free",
+			url: API_URL,
 			params: {
 				message: message,
 				uid: "user1",
 			},
 			headers: {
-				"X-RapidAPI-Key":
-					"7e3622d2a1msh75f497f069a0051p1500b8jsn8fee94ad6cf6",
+				"X-RapidAPI-Key": API_KEY,
 				"X-RapidAPI-Host": "ai-chatbot.p.rapidapi.com",
 			},
 		};
