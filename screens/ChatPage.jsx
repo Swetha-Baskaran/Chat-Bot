@@ -18,32 +18,42 @@ const ChatPage = () => {
 			sender: "ai",
 		},
 	]);
-
-	const sendMessage = () => {
+	const send = async () => {
 		if (message) {
-			// 	const data = {
-			// 		model: "text-davinci-003",
-			// 		prompt: "Say this is a test",
-			// 		max_tokens: 7,
-			// 		temperature: 0,
-			// 	};
-
-			// 	const config = {
-			// 		headers: {
-			// 			"Content-Type": "application/json",
-			//
-			// 		},
-			// 	};
-
-			// 	await axios.post("https://api.openai.com/v1/completions", data, config)
-			// 		.then(response => {
-			// 			console.log(response);
-			// 		})
-			// 		.catch(error => {
-			// 			console.error(error);
-			// 		});
-			setMessages([...messages, {message, sender: "user"}]);
+			await setMessages([...messages, {message: message, sender: "user"}]);
+			console.log(messages);
+			await sendMessage();
 			setMessage("");
+		}
+	};
+	const sendMessage = async () => {
+		const options = {
+			method: "GET",
+			url: "https://ai-chatbot.p.rapidapi.com/chat/free",
+			params: {
+				message: message,
+				uid: "user1",
+			},
+			headers: {
+				"X-RapidAPI-Key":
+					"7e3622d2a1msh75f497f069a0051p1500b8jsn8fee94ad6cf6",
+				"X-RapidAPI-Host": "ai-chatbot.p.rapidapi.com",
+			},
+		};
+		try {
+			const response = await axios.request(options);
+			console.log(messages);
+			setMessages([
+				...messages,
+				{message: message, sender: "user"},
+				{message: response?.data?.chatbot?.response, sender: "ai"},
+			]);
+		} catch (error) {
+			console.error(error);
+			setMessages([
+				...messages,
+				{message: "sry...try again...", sender: "ai"},
+			]);
 		}
 	};
 
@@ -72,7 +82,7 @@ const ChatPage = () => {
 				{messages.map((msg, index) => (
 					<>
 						<View
-							key={index + msg.message}
+							key={index}
 							style={{
 								display: "flex",
 								justifyContent:
@@ -133,7 +143,7 @@ const ChatPage = () => {
 					onChangeText={text => setMessage(text)}
 					placeholder='Type your message here'
 				/>
-				<TouchableOpacity onPress={sendMessage}>
+				<TouchableOpacity onPress={send}>
 					<Text
 						style={{
 							borderRadius: 10,
