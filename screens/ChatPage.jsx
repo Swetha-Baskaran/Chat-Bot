@@ -6,10 +6,9 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollView,
-	ImageBackground,
 } from "react-native";
 import axios from "axios";
-import {API_URL, API_KEY} from "@env";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const ChatPage = () => {
 	const scrollViewRef = useRef();
@@ -24,30 +23,30 @@ const ChatPage = () => {
 		if (message) {
 			await setMessages([...messages, {message: message, sender: "user"}]);
 			setMessage("");
-			console.log(messages);
 			await sendMessage();
 		}
 	};
+
 	const sendMessage = async () => {
 		const options = {
-			method: "GET",
-			url: API_URL,
-			params: {
-				message: message,
-				uid: "user1",
-			},
+			method: "POST",
+			url: "https://chatgpt-api7.p.rapidapi.com/ask",
 			headers: {
-				"X-RapidAPI-Key": API_KEY,
-				"X-RapidAPI-Host": "ai-chatbot.p.rapidapi.com",
+				"content-type": "application/json",
+				"X-RapidAPI-Key":
+					"7e3622d2a1msh75f497f069a0051p1500b8jsn8fee94ad6cf6",
+				"X-RapidAPI-Host": "chatgpt-api7.p.rapidapi.com",
+			},
+			data: {
+				query: message,
 			},
 		};
 		try {
 			const response = await axios.request(options);
-			console.log(messages);
 			setMessages([
 				...messages,
 				{message: message, sender: "user"},
-				{message: response?.data?.chatbot?.response, sender: "ai"},
+				{message: response?.data?.response, sender: "ai"},
 			]);
 		} catch (error) {
 			console.error(error);
@@ -64,7 +63,6 @@ const ChatPage = () => {
 				flex: 1,
 				backgroundColor: "#fff",
 				height: "100%",
-				// background: `url(${require("../assets/bot.jpg")})`,
 			}}
 		>
 			<Image
@@ -83,7 +81,7 @@ const ChatPage = () => {
 					right: 0,
 					justifyContent: "center",
 					alignItems: "center",
-					opacity:0.4,
+					opacity: 0.4,
 				}}
 			/>
 			<ScrollView
@@ -127,11 +125,12 @@ const ChatPage = () => {
 								/>
 							)}
 							<Text
+								selectable
 								style={{
 									backgroundColor: "#a5e89f",
 									padding: 9,
 									marginTop: 4,
-									marginBottom: 4,
+									marginBottom: 5,
 									borderRadius: 10,
 									maxWidth: 270,
 									fontSize: 17,
@@ -152,19 +151,6 @@ const ChatPage = () => {
 					padding: 10,
 					flexDirection: "row",
 					alignItems: "center",
-					justifyContent: "center",
-					paddingTop: 7,
-				}}
-			>
-				<Text>a</Text>
-				<Text>b</Text>
-				<Text>c</Text>
-			</View>
-			<View
-				style={{
-					padding: 10,
-					flexDirection: "row",
-					alignItems: "center",
 					paddingTop: 7,
 				}}
 			>
@@ -180,6 +166,7 @@ const ChatPage = () => {
 						borderColor: "#a5e89f",
 						backgroundColor: "#a5e89f47",
 						marginRight: 10,
+						height: 70,
 					}}
 					value={message}
 					onChangeText={text => setMessage(text)}
@@ -192,20 +179,24 @@ const ChatPage = () => {
 						display: "flex",
 						borderRadius: 10,
 						alignItems: "center",
+						position: "relative",
 					}}
 				>
 					<TouchableOpacity onPress={send}>
 						<Text
 							style={{
-								// borderRadius: 10,
-								// backgroundColor: "#a5e89f",
-								// height:0,
+								transform: "translate(0px, 19px)",
 								fontSize: 17,
 								padding: 4,
 								paddingHorizontal: 17,
 							}}
 						>
-							Send
+							<Icon
+								name='send'
+								style={{
+									fontSize: 25,
+								}}
+							/>
 						</Text>
 					</TouchableOpacity>
 				</View>
